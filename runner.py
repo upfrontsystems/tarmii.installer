@@ -231,7 +231,7 @@ def main():
     args = [sys.executable]
 
     # Special workaround for windows
-    w32_runzope = os.path.join(bindir, 'runzope-script.py')
+    w32_runzope = os.path.join(bindir, 'run-instance-script.py')
     if os.path.exists(w32_runzope):
         args.append(w32_runzope)
     else:

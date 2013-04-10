@@ -2,10 +2,10 @@
 
 #Define these prior to building your installer
 !define STARTMENU "$SMPROGRAMS\TARMII"
-!define WINDOWS "c:\windows"
-!define INSTALLER "c:\tarmii_installer"
-!define PLONE "c:\Plone42"
-!define TARMII ${PLONE}\src\tarmii.theme
+!define INSTALLER_DIR "c:\tarmii_installer"
+!define TARGET_DIR "c:\tarmii"
+!define SOURCE_DIR "c:\tarmii"
+!define TARMII "${SOURCE_DIR}\src\tarmii.theme"
 
 #no non-programmers allowed past this point
 
@@ -17,7 +17,7 @@
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 outFile "TARMII_Installer.exe"
 AllowRootDirInstall true
-InstallDir "c:\TARMII"
+InstallDir "${TARGET_DIR}"
 
 # Request application privileges for Windows Vista
 RequestExecutionLevel user
@@ -25,8 +25,8 @@ RequestExecutionLevel user
 # Interface Settings
 !define MUI_HEADERIMAGE_BITMAP_NOSTRETCH
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP ${INSTALLER}\banner.bmp
-!define MUI_ICON ${INSTALLER}\icon.ico
+!define MUI_HEADERIMAGE_BITMAP ${INSTALLER_DIR}\banner.bmp
+!define MUI_ICON ${INSTALLER_DIR}\icon.ico
 !define MUI_ABORTWARNING
 
 # Welcome page text
@@ -36,8 +36,7 @@ with the installation."
 
 # Pages
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE ${INSTALLER}\licence.txt
-!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_LICENSE ${INSTALLER_DIR}\licence.txt
 !insertmacro MUI_PAGE_INSTFILES
   
 !insertmacro MUI_UNPAGE_CONFIRM
@@ -46,48 +45,37 @@ with the installation."
 # Languages
 !insertmacro MUI_LANGUAGE "English"
 
-Section "Assessment Bank"
+Section "Install TARMII"
     SectionIn RO
-    SetOutPath $INSTDIR\instance
-    File ${BUILDOUT}\shoelace.py
-    File ${BUILDOUT}\windows.cfg
-    File ${BUILDOUT}\versions.cfg
-    File /r /x .svn ${BUILDOUT}\bin
-    File /r /x .svn ${BUILDOUT}\develop-eggs
-    File /r /x .svn ${BUILDOUT}\fake-eggs
-    File /r /x .svn ${BUILDOUT}\eggs
-    File /r /x .svn ${BUILDOUT}\downloads
-    File /r /x .svn ${BUILDOUT}\parts
-    File /r /x .svn /x ab_installer.nsi ${BUILDOUT}\products
-    File /r /x .svn ${BUILDOUT}\src
-    File /r /x .svn ${BUILDOUT}\var
-    File /r /x .svn ${BUILDOUT}\zope2
-    File /r /x .svn ${BUILDOUT}\docs
-    File /oname=bin\ab.py "${INSTALLER}\runner.py"
-    File /oname=bin\logo.png "${INSTALLER}\logo.png"
-    File /oname=bin\icon.ico "${INSTALLER}\icon.ico"
-    File "${INSTALLER}\logo.png"
-    DetailPrint "=-=-=-=-= Bootstrapping =-=-=-=-=-=-=-="
-    ExecWait '"$INSTDIR\python\python.exe" "$OUTDIR\shoelace.py" -c windows.cfg'
-    DetailPrint "=-=-=-=-= Calling buildout =-=-=-=-=-=-=-="
-    ExecWait '"$INSTDIR\python\python.exe" "$OUTDIR\bin\buildout-script.py" -q -U -N -o -c windows.cfg'
+    SetOutPath $INSTDIR
+    File /r ${SOURCE_DIR}\*.*
+    File /oname=bin\ab.py "${INSTALLER_DIR}\runner.py"
+    File /oname=bin\logo.png "${INSTALLER_DIR}\logo.png"
+    File /oname=bin\icon.ico "${INSTALLER_DIR}\icon.ico"
+    File "${INSTALLER_DIR}\logo.png"
 SectionEnd
 
 Section "Start Menu Items"
     SectionIn RO
     CreateDirectory "${STARTMENU}"
-    CreateShortCut "${STARTMENU}\TARMII.lnk" "$INSTDIR\python\pythonw.exe" '"$INSTDIR\instance\bin\ab.py" "$INSTDIR\instance"' "$INSTDIR\instance\bin\icon.ico"
+    CreateShortCut "${STARTMENU}\TARMII.lnk" "$INSTDIR\python\pythonw.exe" '"$INSTDIR\bin\ab.py" "$INSTDIR"' "$INSTDIR\bin\icon.ico"
     CreateShortCut "${STARTMENU}\Uninstall TARMII.lnk" "$INSTDIR\Uninstall_TARMII.exe"
-    CreateShortCut "$DESKTOP\TARMII.lnk" "$INSTDIR\python\pythonw.exe" '"$INSTDIR\instance\bin\ab.py" "$INSTDIR\instance"' "$INSTDIR\instance\bin\icon.ico"
+    CreateShortCut "$DESKTOP\TARMII.lnk" "$INSTDIR\python\pythonw.exe" '"$INSTDIR\bin\ab.py" "$INSTDIR"' "$INSTDIR\bin\icon.ico"
 SectionEnd
 
 Section "Uninstall"
     # Remove tarmii
-    RMDir /r $INSTDIR\instance
-    RMDir /r $INSTDIR\docs
-    RMDir /r $INSTDIR\prerequisites
+    RMDir /r $INSTDIR\var
+    RMDir /r $INSTDIR\src
     RMDir /r $INSTDIR\python
+    RMDir /r $INSTDIR\parts
+    RMDir /r $INSTDIR\eggs
+    RMDir /r $INSTDIR\downloads
+    RMDir /r $INSTDIR\docs
+    RMDir /r $INSTDIR\develop-eggs
+    RMDir /r $INSTDIR\bin
     Delete   $INSTDIR\Uninstall_TARMII.exe
+    Delete   $INSTDIR\*.*
 
     # This should be safe, it will only succeed if INSTDIR is empty
     RMDir $INSTDIR
@@ -100,32 +88,9 @@ SectionEnd
 # Callback function, called after successful install
 Function .onInstSuccess
     MessageBox MB_YESNO "Would you like to start TARMII now?" IDNO dontstart
-        Exec '"$INSTDIR\python\pythonw.exe" "$INSTDIR\instance\bin\ab.py" "$INSTDIR\instance"'
+        Exec '"$INSTDIR\python\pythonw.exe" "$INSTDIR\bin\ab.py" "$INSTDIR"'
     dontstart:
 FunctionEnd
-
-Section "Firefox"
-    SetOutPath . 
-    MessageBox MB_YESNO "Install Mozilla Firefox?" /SD IDYES IDNO endFirefox
-        File "Firefox3Setup.exe"
-        ExecWait "Firefox3Setup.exe"
-    endFirefox:
-SectionEnd
-
-Section "Adobe Acrobat Reader 9"
-    SetOutPath .
-    ; http://www.adobe.com/devnet/acrobat/pdfs/deploying_reader9.pdf
-    ; We use /sPB and /rs
-    ; sPB = Silent mode with minimum UI, Progress Bar only.
-    ; rs = Reboot Suppress.
-    ;      Setup.exe will not initiate reboot even if it is required.
-    ; The msi component can also be customised with command line options.
-    ; These can be found at: http://msdn.microsoft.com/en-us/library/Aa367988
-    MessageBox MB_YESNO "Install Adobe Acrobat Reader 9?" /SD IDYES IDNO endAdobe
-        File "AdbeRdr920_en_US.exe"
-        ExecWait 'AdbeRdr920_en_US.exe /sPB /rs'
-    endAdobe:
-SectionEnd
 
 Section -Uninstall
 WriteUninstaller $INSTDIR\Uninstall_TARMII.exe
