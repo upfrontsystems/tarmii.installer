@@ -1,0 +1,85 @@
+================================
+Build TARMII on Windows 7 64 bit
+================================
+
+Prerequisites
+=============
+
+Install a fresh Windows 7
+-------------------------
+
+Install portable git
+--------------------
+    Download https://code.google.com/p/msysgit/downloads/detail?name=PortableGit-1.8.1.2-preview20130201.7z&can=2&q=
+    Unzip to c:\git
+    Update environment settings as per:
+    c:\git\README.portable
+    NB: copy [git-install-dir]\cmd\git.exe to [git-install-dir]\cmd\git
+        or mr.developer will not find your git executable.
+
+Install 7zip
+------------
+    http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7z920-x64.msi/download?use_mirror=ufpr
+
+Install vim
+-----------
+    file:///C:/Users/rijk/Downloads/gvim73_46.exe
+
+NSIS installer compiler
+-----------------------
+    http://sourceforge.net/projects/nsis/files/NSIS%202/2.46/nsis-2.46-setup.exe/download
+
+Plone unified installer
+-----------------------
+    https://launchpad.net/plone/4.2/4.2.1/+download/setup-plone42-4.2.1-5376-win32.exe
+
+Redo the buildout
+-----------------
+  Stop the Plone42 Zeo and Plone42 services on the windows services panel
+
+  Copy c:\Plone42 to c:\tarmii
+  
+  Change to c:\tarmii
+
+  Delete the zc.buildout 1.4.4 egg
+
+  run:
+      bin\python.exe bootstrap.py -v 1.5.2 -c buildout.cfg
+      bin\buildout.exe
+  test by running:
+      bin/zeo_runzeo.bat
+      bin/run-instance.exe
+      In a web browser navigate to http://localhost:8080
+
+Get tarmii
+----------
+
+  Clone the git repo: http://
+
+  Move the cloned code into the installed Plone folders
+  Make sure you replace buildout.cfg with the cloned one.
+
+  Stop both the zeo and the instance again.
+
+  run:
+      bin\buildout.exe
+
+  test by running:
+      bin/run-instance.exe
+      In a web browser navigate to http://localhost:8080/tarmii
+
+Install python 2.6 into the tarmii 'python' folder
+--------------------------------------------------
+  This is necessary to get wxPython installed correctly.
+
+wxPython
+--------
+  http://sourceforge.net/projects/wxpython/files/wxPython/2.9.4.0/wxPython2.9-win32-2.9.4.0-py26.exe/download
+  Install it in the python that was installed by the unified installer.
+  Our custom runner.py requires this.
+
+Install pywin32
+---------------
+  http://sourceforge.net/projects/pywin32/?source=dlp
+  runner.py depends on it.
+
