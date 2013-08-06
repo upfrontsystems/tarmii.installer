@@ -2,75 +2,98 @@
 Build TARMII on Windows 7 64 bit
 ================================
 
+NOTE:
+  Make VERY sure you are using only 32 bit OR only 64 installs/ libraries.
+  Mixing the two WILL make you cry :(
+
+  Install everything as 'administrator'.
+  Simply start a 'cmd' shell  as 'administrator' and install everything via
+  this shell.
+
 Prerequisites
 =============
 
-Install a fresh Windows 7
--------------------------
+Install a fresh Windows 7 64 bit
+--------------------------------
 
 Install portable git
 --------------------
-    Download https://code.google.com/p/msysgit/downloads/detail?name=PortableGit-1.8.1.2-preview20130201.7z&can=2&q=
-    Unzip to c:\git
-    Update environment settings as per:
-    c:\git\README.portable
-    NB: copy [git-install-dir]\cmd\git.exe to [git-install-dir]\cmd\git
-        or mr.developer will not find your git executable.
+  Download https://code.google.com/p/msysgit/downloads/detail?name=PortableGit-1.8.1.2-preview20130201.7z&can=2&q=
+  Unzip to c:\git
+  Update environment settings as per:
+  c:\git\README.portable
+  NB: copy [git-install-dir]\cmd\git.exe to [git-install-dir]\cmd\git
+      or mr.developer will not find your git executable.
 
 Install 7zip
 ------------
-    http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7z920-x64.msi/download?use_mirror=ufpr
+  http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7z920-x64.msi/download?use_mirror=ufpr
 
 Install vim
 -----------
-    file:///C:/Users/rijk/Downloads/gvim73_46.exe
-
-NSIS installer compiler
------------------------
-    http://sourceforge.net/projects/nsis/files/NSIS%202/2.46/nsis-2.46-setup.exe/download
+  file:///C:/Users/rijk/Downloads/gvim73_46.exe
 
 Plone unified installer
 -----------------------
-    https://launchpad.net/plone/4.2/4.2.1/+download/setup-plone42-4.2.1-5376-win32.exe
-
-Redo the buildout
------------------
-  Stop the Plone42 Zeo and Plone42 services on the windows services panel
-
-  Copy c:\Plone42 to c:\tarmii
   
-  Change to c:\tarmii
+  Plone 4.2.1 installer (enfold systems)
 
-  Delete the zc.buildout 1.4.4 egg
+Stop the Plone service
+----------------------
 
-  run:
-      bin\python.exe bootstrap.py -v 1.5.2 -c buildout.cfg
-      bin\buildout.exe
-  test by running:
-      bin/zeo_runzeo.bat
-      bin/run-instance.exe
-      In a web browser navigate to http://localhost:8080
+  Use the windows services panel.
 
-Get tarmii
-----------
-
-  Clone the git repo: http://
-
-  Move the cloned code into the installed Plone folders
-  Make sure you replace buildout.cfg with the cloned one.
-
-  Stop both the zeo and the instance again.
-
-  run:
-      bin\buildout.exe
-
-  test by running:
-      bin/run-instance.exe
-      In a web browser navigate to http://localhost:8080/tarmii
+Move the above default install to 'tarmii'
+------------------------------------------
+  Copy c:\Plone4.2.1 to c:\tarmii
+  Uninstall the plone instance. We want the tarmii one to have none of the
+  Windows registry entries, etc. that the installer created.
+  You might want to double check the registry via regedit, just to be sure.
 
 Install python 2.6 into the tarmii 'python' folder
 --------------------------------------------------
+ 
   This is necessary to get wxPython installed correctly.
+  Get it here: 
+  Install it into the folder c:\tarmii\python
+
+  Make sure you add the freshly installed python to your system path.
+  Computer >> properties >> Advanced >> Environment variables >> System variables.
+  Add c:\\tarmii\python and c:\tarmii\python\Tools\Scripts to 'PATH' variable.
+  
+************************************************************************
+*** AT THIS POINT YOU HAVE TO CLOSE THE TERMINANL YOU ARE WORKING IN ***
+*** AND OPEN A NEW ONE.                                              ***
+***                                                                  ***
+*** This ensures that all environment variables will be available    ***
+*** to the terminal.                                                 ***
+************************************************************************
+
+Install MingGW (skipped)
+--------------
+
+  Download from: http://ufpr.dl.sourceforge.net/project/mingw/Installer/mingw-get-inst/mingw-get-inst-20120426/mingw-get-inst-20120426.exe
+  Note: Make sure you install the 'MinGW developer Toolkit' too. IT is on of 
+        options on the 'Select Components' UI.
+        The install takes quite a while, because it fetches a lot of packages
+        from the main server.
+
+Install cython (skipped)
+--------------
+
+  C:\tarmii>python\Scripts\pip.exe install cython
+  For the sake of lxml.
+
+Install pywin32
+---------------
+  http://sourceforge.net/projects/pywin32/?source=dlp
+  runner.py depends on it.
+  NB: Install the 64 version if you are using 64bit python!
+
+  The installer should automatically find the python you installed in c:\tarmii\python
+
+  If the installer keeps complaining about the post-install step do this:
+    C:\tarmii>python\python.exe python\Scripts\pywin32_postinstall.py -install
 
 wxPython
 --------
@@ -78,8 +101,67 @@ wxPython
   Install it in the python that was installed by the unified installer.
   Our custom runner.py requires this.
 
-Install pywin32
----------------
-  http://sourceforge.net/projects/pywin32/?source=dlp
-  runner.py depends on it.
+Install PIL
+-----------
 
+  Get it here: http://www.pythonware.com/products/pil/
+  Note: make sure it installs into the python you will use to build plone.
+
+Install reportlab
+-----------------
+
+  Get it here: http://www.reportlab.com/ftp/reportlab-2.7.win-amd64-py2.6.exe
+  Note: make sure it installs into the python you will use to build plone.
+
+Install easy_install
+--------------------
+
+  Download installer here: https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
+  Install with: c:\tarmii\python\python.exe ez_setup.py
+
+Install pip
+-----------
+
+  c:\tarmii\python\Scripts\easy_install pip
+
+Lxml
+----
+
+  Grab it here: http://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml
+  And install.
+
+Redo the buildout
+-----------------
+  Change to c:\tarmii
+
+  run:
+      bin\buildout.exe -Nvc windows.cfg
+  test by running:
+      bin\instance.exe fg
+      In a web browser navigate to http://localhost:8080
+
+Install freetype (skipped)
+----------------
+
+  Get it here: http://ufpr.dl.sourceforge.net/project/gnuwin32/freetype/2.3.5-1/freetype-2.3.5-1-setup.exe
+
+Get tarmii
+----------
+
+  Clone the git repo: http://github.com/upfrontsystems/tarmii.buildout.git
+
+  Move the cloned code into the installed Plone folders
+  Make sure you replace buildout.cfg with the cloned one.
+
+  Stop the instance again.
+
+  run:
+      bin\buildout.exe -c windows.cfg
+
+  test by running:
+      bin\run-instance.exe
+      In a web browser navigate to http://localhost:8080/tarmii
+
+NSIS installer compiler
+-----------------------
+  http://sourceforge.net/projects/nsis/files/NSIS%202/2.46/nsis-2.46-setup.exe/download
