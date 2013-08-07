@@ -11,11 +11,12 @@
 
 !define PRODUCT_NAME "TARMII"
 !define PRODUCT_PUBLISHER "Upfront Systems"
-!define /file PRODUCT_VERSION ${TARMII}\version.txt
+!define /file PRODUCT_VERSION version.txt
+!define /file BUILD build_number.txt
 
 #Name the Installer
-Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-outFile "TARMII_Installer.exe"
+Name "${PRODUCT_NAME} ${PRODUCT_VERSION} (build:${BUILD})"
+OutFile "TARMII_Installer_v${PRODUCT_VERSION}_${BUILD}.exe"
 AllowRootDirInstall true
 InstallDir "${TARGET_DIR}"
 
@@ -44,6 +45,18 @@ with the installation."
 
 # Languages
 !insertmacro MUI_LANGUAGE "English"
+
+# This section installs the pywin32 extensions. It does not call the
+# postinstall script, ie the extensions are not registered with windows
+# explorer, neither are the COM objects registered.
+Section "Python Windows Extensions"
+    SectionIn RO
+    DetailPrint "=-=-=-=-= Copying PyWin =-=-=-=-=-=-=-="
+    SetOutPath $INSTDIR\python
+    File "${SOURCE_DIR}\python\Lib\site-packages\win32\*.pyd"
+    File "${SOURCE_DIR}\python\Lib\site-packages\win32\pythonservice.exe"
+    File "${SOURCE_DIR}\python\Lib\site-packages\pywin32_system32\*.*"
+SectionEnd
 
 Section "Install TARMII"
     SectionIn RO
