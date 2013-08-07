@@ -1,4 +1,5 @@
 !include MUI2.nsh
+!include LogicLib.nsh 
 
 #Define these prior to building your installer
 !define STARTMENU "$SMPROGRAMS\TARMII"
@@ -8,6 +9,10 @@
 !define TARMII "${SOURCE_DIR}\src\tarmii.theme"
 
 #no non-programmers allowed past this point
+
+;!undef LOGICLIB_VERBOSITY
+; For debugging - watch what logiclib does with your code!
+;!define LOGICLIB_VERBOSITY 4
 
 !define PRODUCT_NAME "TARMII"
 !define PRODUCT_PUBLISHER "Upfront Systems"
@@ -45,6 +50,57 @@ with the installation."
 
 # Languages
 !insertmacro MUI_LANGUAGE "English"
+
+Function .onInit
+# Section Size must be manually set to the size of the required disk space NSIS will not do this for external files.
+# set required size of section number of kilobytes
+# This is the total disk size all the files occupy together.
+SectionSetSize ${SecDecompress} 89935872
+ 
+;compressed_#.taz has be in the same directory as the Setup file.
+${If} ${FileExists} "$EXEDIR\filestorage.tgz"
+${AndIf} ${FileExists} "$EXEDIR\blobstorage.tgz"
+Return
+${Else}
+MessageBox MB_OK|MB_ICONINFORMATION "This copy of the installer is missing a compressed#.tar file.." IDOK abort
+abort:
+Banner::destroy
+Abort
+${EndIf}
+FunctionEnd
+
+Section -decompress SecDecompress
+;UnTGZ Plugin
+;compressed_#.tar in this example is compressed by gzip. 
+; untgz plugin requires -z to denote this.
+
+; extract the Data.fs and Data.fs.index to var\filestorage
+untgz::extract -j -d -k "$INSTDIR\var\filestorage" -z"$EXEDIR\filestorage.tgz"
+
+; check if the filestorage extracted ok.
+${If} ${FileExists} "${INSTDIR}\var\filestorage\Data.fs"
+    ; if it did we can extract the blobs too.
+    untgz::extract -j -d -k "$INSTDIR\var\blobstorage" -z"$EXEDIR\blobstorage.tgz"
+
+${AndIf} ${FileExists} "${INSTDIR}\var\blobstorage"
+    Goto EverythingOk
+
+${Else}
+    MessageBox MB_OK|MB_ICONEXCLAMATION "Installation Failure. Media may be corrupt." IDOK
+    abort
+
+    abort:
+        Banner::destroy
+        Abort
+${EndIf}
+
+EverythingOK:
+;If tar files were packaged into the setup you can delete it like this :)
+${If} ${FileExists} "${INSTDIR}\filestorage.tgz"
+    Delete "$INSTDIR\filestorage.tgz"
+${If} ${FileExists} "${INSTDIR}\blobstorage.tgz"
+    Delete "$INSTDIR\blobstorage.tgz"
+SectionEnd
 
 # This section installs the pywin32 extensions. It does not call the
 # postinstall script, ie the extensions are not registered with windows
