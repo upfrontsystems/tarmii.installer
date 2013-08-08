@@ -31,7 +31,7 @@ def stopZope(port, auth):
             'Accept': 'text/plain',
             'Authorization': 'Basic %s' % encodestring(auth)
             }
-    conn = HTTPConnection('localhost:8080')
+    conn = HTTPConnection('127.0.0.1:8080')
     conn.request('POST', '/Control_Panel', params, headers)
 
     # Throw the response away
@@ -172,7 +172,10 @@ class LogApp(wx.App):
         stopZope(self._port, self._auth)
 
     def onOpen(self, event):
-        webbrowser.open('http://localhost:8080/tarmii/')
+	# This depeneds on a VHM mapping of localhost:8080 /tarmii in the root
+	# of the zope instance!
+	# This is also why the url to stop tarmii has to be 127.0.0.1:8080
+        webbrowser.open('http://localhost:8080')
 
     def onHelp(self, event):
 	ShellExecute(

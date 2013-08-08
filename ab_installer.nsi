@@ -14,8 +14,9 @@
 ; For debugging - watch what logiclib does with your code!
 ;!define LOGICLIB_VERBOSITY 4
 
-!define PRODUCT_NAME "TARMII"
-!define PRODUCT_PUBLISHER "Upfront Systems"
+!define PRODUCT_NAME "TARMII Foundation Phase version 1.0"
+!define PRODUCT_PUBLISHER "Human Sciences Research Council"
+
 !define /file PRODUCT_VERSION version.txt
 !define /file BUILD build_number.txt
 
@@ -121,7 +122,7 @@ Function .onInit
 # Section Size must be manually set to the size of the required disk space NSIS will not do this for external files.
 # set required size of section number of kilobytes
 # This is the total disk size all the files occupy together.
-SectionSetSize ${SecDecompress} 89935872
+SectionSetSize ${SecDecompress} 1384800256
  
 ;compressed files has be in the same directory as the Setup file.
 ${If} ${FileExists} "$EXEDIR\filestorage.tgz"
