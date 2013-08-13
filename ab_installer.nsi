@@ -87,11 +87,11 @@ Section -decompress SecDecompress
 ;The files are compressed by gzip. Untgz plugin requires -z to denote this.
 
 ; extract the Data.fs and Data.fs.index to var\filestorage
-untgz::extract -j -d "$INSTDIR\var\filestorage" -k -z "$EXEDIR\filestorage.tgz" 
+untgz::extract -d "$INSTDIR\var\" -k -z "$EXEDIR\filestorage.tgz" 
 
 ; check if the filestorage extracted ok.
 ; if it did we can extract the blobs too.
-untgz::extract -d "$INSTDIR\var\blobstorage" -k -z "$EXEDIR\blobstorage.tgz" 
+untgz::extract -d "$INSTDIR\var\" -k -z "$EXEDIR\blobstorage.tgz" 
 
 SectionEnd
 
