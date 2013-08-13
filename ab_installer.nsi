@@ -14,14 +14,14 @@
 ; For debugging - watch what logiclib does with your code!
 ;!define LOGICLIB_VERBOSITY 4
 
-!define PRODUCT_NAME "TARMII Foundation Phase version 1.0"
-!define PRODUCT_PUBLISHER "Human Sciences Research Council"
-
 !define /file PRODUCT_VERSION version.txt
 !define /file BUILD build_number.txt
 
+!define PRODUCT_NAME "TARMII Foundation Phase version ${PRODUCT_VERSION}"
+!define PRODUCT_PUBLISHER "Human Sciences Research Council"
+
 #Name the Installer
-Name "${PRODUCT_NAME} ${PRODUCT_VERSION} (build:${BUILD})"
+Name "${PRODUCT_NAME} (build:${BUILD})"
 OutFile "TARMII_Installer_v${PRODUCT_VERSION}_build${BUILD}.exe"
 AllowRootDirInstall true
 InstallDir "${TARGET_DIR}"
@@ -43,7 +43,7 @@ with the installation."
 
 # Pages
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE ${INSTALLER_DIR}\licence.txt
+;!insertmacro MUI_PAGE_LICENSE ${INSTALLER_DIR}\licence.txt
 !insertmacro MUI_PAGE_INSTFILES
   
 !insertmacro MUI_UNPAGE_CONFIRM
@@ -91,7 +91,7 @@ untgz::extract -j -d "$INSTDIR\var\filestorage" -k -z "$EXEDIR\filestorage.tgz"
 
 ; check if the filestorage extracted ok.
 ; if it did we can extract the blobs too.
-untgz::extract -j -d "$INSTDIR\var\blobstorage" -k -z "$EXEDIR\blobstorage.tgz" 
+untgz::extract -d "$INSTDIR\var\blobstorage" -k -z "$EXEDIR\blobstorage.tgz" 
 
 SectionEnd
 
@@ -102,10 +102,10 @@ Section "Uninstall"
     RMDir /r $INSTDIR\python
     RMDir /r $INSTDIR\parts
     RMDir /r $INSTDIR\eggs
+    RMDir /r $INSTDIR\mocked-eggs
     RMDir /r $INSTDIR\downloads
     RMDir /r $INSTDIR\docs
     RMDir /r $INSTDIR\develop-eggs
-    RMDir /r $INSTDIR\mock-eggs
     RMDir /r $INSTDIR\bin
     Delete   $INSTDIR\Uninstall_TARMII.exe
     Delete   $INSTDIR\*.*
@@ -136,6 +136,7 @@ stopInstallation:
   Abort
 
 ${EndIf}
+
 FunctionEnd
 
 # Callback function, called after successful install

@@ -1,4 +1,7 @@
-tarmii.installer
-================
+How to build the TARMII windows installer
+=========================================
 
-TARMII Windows installer
+Run the compile_installer.bat file.
+
+Don
+
