@@ -162,6 +162,14 @@ Get tarmii
       bin\run-instance.exe
       In a web browser navigate to http://localhost:8080/tarmii
 
+Get the latest blob and filestorage
+-----------------------------------
+
+Remember to add a VHM entry
+---------------------------
+
+  localhost:8080 /tarmii
+
 NSIS installer compiler
 -----------------------
   http://sourceforge.net/projects/nsis/files/NSIS%202/2.46/nsis-2.46-setup.exe/download
