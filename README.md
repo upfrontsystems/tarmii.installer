@@ -1,19 +1,26 @@
 How to build the TARMII windows installer
 =========================================
 
-Update the buildout checkout
-----------------------------
+Update the installer builder checkout
+-------------------------------------
 
   run::
 
     bin\develop up
+
+Copy the windows.cfg
+--------------------
+  
+  from the tarmii installer folder
+
+  to tarmii/windows.cfg
 
 Rebuild tarmii
 --------------
 
   run::
 
-    bin\buildout.exe -c windows.cfg
+    bin\buildout.exe -Nvc windows.cfg
 
 Get the latest blob and filestorage
 -----------------------------------
