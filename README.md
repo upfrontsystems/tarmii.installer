@@ -29,6 +29,13 @@ Start the instance
 
     bin\run-instance.exe
 
+Check where the images are stored
+---------------------------------
+
+  If they are still in the root, run the script::
+
+    bin\instance run scripts\move_images.zctl tarmii
+
 Add a VHM entry
 ---------------
   
@@ -62,7 +69,7 @@ Check the teacher data upload settings
 
   Upload password::
 
-    12345
+    yu0aid6V
  
 Check the synchronisation settings
 ----------------------------------
@@ -81,7 +88,7 @@ Check the synchronisation settings
  
   Synchronisation Server password::
  
-    12345
+    yu0aid6V
 
 Move data and blobs away
 ------------------------
